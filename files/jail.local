@@ -1,0 +1,10 @@
+[DEFAULT]
+enable = true
+bantime = 120s
+maxretry = 3
+
+[sshd]
+enable = true
+port = 3333
+logpath = /var/log/auth.log
+maxretry = 3

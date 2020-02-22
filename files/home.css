@@ -1,0 +1,233 @@
+body {background-color:#cee1db;
+        margin:0;}
+h1 {font-size:60px;
+    text-align: center;
+    }
+
+h3 {float:right;
+    margin-right:5px;
+    margin-top: 40px;
+}
+
+header {width:100%;
+        display:inline-block;
+        background-color: #e2b69b;}
+
+img {width: 100%;
+    }
+
+table {
+    width: 95%;
+    padding: 0px;
+    margin-left:auto;
+    margin-right:auto;
+    overflow-x:auto;
+    border-spacing: 0px;
+    border-collapse: collapse;
+}
+
+th {background-color:#F0E7B4;
+    padding:0px;
+    border:solid 1px black;}
+
+td {background-color: whitesmoke;
+    padding:0px;
+    border:solid 1px black;
+    }
+
+#non {background-color: #C6F3B7;
+        border:none;}
+
+#readme {text-decoration: none;
+        color:black;}
+      /* border: solid 1px black;} */
+
+#cat {text-decoration: none;
+        color:#A4B2B4;}
+
+#readme:hover {color:pink;}
+
+#cat:hover {color:pink;}
+
+#sign {width: 400px;
+        text-align:left;
+        padding-left:10px;
+        padding-top:10px;}
+
+#panier {width:50px;
+        height:50px;
+        padding-top:10px;
+        padding-right:10px;
+        float:right;}
+
+#categorie {width : 100%;
+            background-color: #feece2;
+            text-align:center;
+            padding-top:10px;
+            padding-bottom:10px;
+}
+
+#titre {font-size: 3vmin;
+        text-decoration:underline;
+}
+
+#auteur {font-size:2vmin;
+        font-style:italic;}
+
+#prix {font-size: 5vmin;}
+
+#texte {text-align:justify;
+        font-size:2vmin;}
+
+#article {width: 50vmin;
+            height:100vmin;
+            vertical-align: middle;
+            display: inline-block;
+}
+
+#page_article {text-align:center;}
+
+#p {padding-left:10px;
+    width:50%;
+}
+
+#form_db {text-align:center;
+            margin-left:auto;
+            margin-right:auto;}
+
+#quantity {
+    width: 3vmin;
+    text-align:right;
+    margin-left:50%;
+}  
+
+#submit_tab{width:30%;
+            font-size: 1vmin;
+            text-align:center;
+            vertical-align: middle;
+}
+
+#cart {border:solid 3px black;}
+
+.price_tab {text-align:right;
+  padding:5px;}
+
+.db_management {padding-top: 30px;}
+
+.class {display:inline-block;
+        width:100%;}
+
+.categories {display:inline-block;
+                width:18vw;
+                text-align:center;
+                padding: 10;
+                font-size: 2vw;
+}
+
+.mini {
+    max-width:5vmin;
+    padding:2px;
+    display:inline-block;
+    vertical-align: middle;
+}
+
+.minitext {display:inline-block;
+    vertical-align: middle;
+    padding:10px;}
+
+.livre {padding : 10;
+    width:30vmin;
+    height:70vmin;
+    text-align: center;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.header {
+    width: 100%;
+    margin: auto;
+    color: white;
+    font-size: 3vmin;
+    background: #afd8b7;
+    text-align: center;
+    border-bottom: none;
+    border-radius: 10px 10px 0px 0px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    box-shadow: 5px 5px 10px black;
+  }
+
+.test {width: 100vmin;
+        height: 50vmin;
+        margin-top:30px;
+        margin-left:auto;
+        margin-right:auto;
+    border-radius: 0px 10px 10px 10px;
+}
+
+.auteur {text-align:center;
+            padding:10;
+            }
+
+form, .content {
+    width: 100%;
+    margin: auto;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    /* border: 1px solid rgb(61, 127, 189); */
+    background:#C6F3B7;
+    border-radius: 0px 0px 10px 10px;
+    box-shadow: 5px 5px 10px black;
+
+  }
+  .input-group {
+    margin: 10px 0px 10px 0px;
+    padding-left: 10px;
+  }
+  .input-group label {
+    display: block;
+    text-align: left;
+    margin: 3px;
+  }
+  .input-group input {
+    height: 2vmin;
+    width: 93%;
+    padding: 5px 10px;
+    font-size: 2vmin;
+    border-radius: 5px;
+    border: 1px solid gray;
+  }
+  .btn {
+    padding: 10px;
+    font-size: 2vmin;
+    color: white;
+    background: #5F9EA0;
+    border: none;
+    border-radius: 5px;
+  }
+  .error {
+    width: 92%; 
+    margin: 0px auto; 
+    padding: 10px; 
+    border: 1px solid #a94442; 
+    color: #a94442; 
+    background: #f2dede; 
+    border-radius: 5px; 
+    text-align: left;
+  }
+  .popup {
+    width: 92%; 
+    margin: 0px auto; 
+    padding: 10px; 
+    border: 1px solid #15501d; 
+    color: #9fa942; 
+    background: #f2dede; 
+    border-radius: 5px; 
+    text-align: left;
+  }
+  .success {
+    color: #3c763d; 
+    background: #dff0d8; 
+    border: 1px solid #3c763d;
+    margin-bottom: 20px;
+  }

@@ -1,0 +1,147 @@
+###################### Feb, 20th 2020 ########################
+######################### TEST14: ##################################
+##################### CREER LA VM #################################
+New
+name: TEST14
+Machine folder: /sgoinfre/goinfre/Perso/manki/VirtualBox VMs
+Type: Linux
+Version: Debian (64-bits)
+
+Memory size 4096MB
+
+Create a virtual hard disk now
+
+VDI (Virtual Hard Disk Image)
+
+Fixed size
+
+8.00GB (I didn't change the path of the .vdi file)
+
+2 min wait => once finished, do not start the VM before changing the settings:
+
+		Settings
+generals:
+	Shared Clipboard: Bi-derectional
+	Drag and drop : Bi directional
+System:
+	System->Floppy-> uncheck
+	Processor : 4CPU
+	Storage => in Storage Devices click on empty, then in Attributes, click
+on the blue circle next to optical drive, and choose debian-10.1.0-amd64-netinst.iso
+	Network->Adapter 1-> attached to: Bridge Adapter
+	Shared Folder: creer des dossier partage entre la VM et ma session
+
+START the VM and click on Install
+Select a language : French
+Situation Geographique : France
+clavier : Etats-Unis
+Nom de machine : test14
+Domaine : <empty>
+Creer les utilisateurs et choisir les mot de passe :
+mdp root : 1234
+nom complet du nouvel utilisateur : Myriam
+id user : manki
+mdp user : manki
+
+Partitionnement assiste->manuel :
+	click on SCSI3(0,0,0)(sda)...
+	faut-il creer une nouvelle table des partitions sur ce disque ? oui
+	click on pri/log 8.6 GB Espace Libre => creer une nouvelle partition
+		=> 4.5GB, Primaire, emplacement: Debut, utiliser comme: systeme
+		de fichiers ext2, point de montage /, fin du paramettrage de
+		cette partition
+	click on pri/log 4.0 GB Espace Libre => creer une nouvelle partition
+		=> 4.1GB, Logique,  utiliser comme: espace d'echange swap,
+		fin du paramettrage de cette partition
+	Terminer le Partitionnement et appliquer les changements
+	Faut-il appliquer les changement sur les disques => oui
+
+Analyser un autre cd -> non
+France
+Debian archive mirror: ftp.fr.debian.org
+mandataire http : <leave empty>
+Participer a l'etude, non
+Selection des logiciels :
+	- serveur ssh
+	- utilitaires usuels du systeme
+Installer GRUB : oui
+dans /dev/sta...
+	fin d'installation du systeme
+
+test14 login : manki
+Password: manki
+############################### FIN CREATION VM ##############################
+
+########################### COMMANDES UTILES #################################
+
+sudo fdisk -l => debian disk infos
+
+sudo vim /etc/sudoers : pour configurer les sudo users
+
+sudo vim /etc/network/interfaces => to configure a static IP address.
+
+	sudo parted
+	unit GB print
+=> verifier la taille des partitions
+
+ip addr #remplace ifconfig
+
+sudo service sshd restart
+
+apt-get -y upgrade
+
+apt list --installed > tmp
+(ou grep " install " /var/log/dpkg.log)
+
+sudo adduser name
+sudo adduser name sudo
+sudo deluser name sudo
+
+list sudo user : getent group sudo
+see all user : cat /etc/passwd ou (cut -d: -f1 /etc/passwd)
+
+sudo service --status-all
+sudo service nomDuService status (sudo service dhcp status)
+
+Choisissez un netmask different que /30, demandez a l'évalué de
+configurer coté host et coté guest une connexion reseau avec ce netmask.
+L'evalué choisira les IP. Si ce n'est pas réussi, ce test est échoué.
+	sudo vi /etc/network/interfaces.d/enp0s3 => changer le netmask et l'IP
+	sudo vi /etc/ssh/sshd_config	=> password authentification yes
+		(pour pouvoir se connecter en ssh)
+					=> changer le port ssh
+	sudo reboot
+
+lister les regles de parefeu (iptables):
+	sudo iptables -L
+
+apt-get install net-tools
+netstat -paunt ==> pour lister les ports ouverts
+port 80 = http
+port 443 = https
+port 587 = smtp email message submission
+port 25 = SMTP simple mail transfert protocol
+(https://fr.wikipedia.org/wiki/Liste_de_ports_logiciels)
+
+sudo service --status-all
+apache2 => serveur http
+cron => gestionnaire des taches
+dbus => D-Bus est actuellement un démon permettant la communication inter-processus
+kmod => outils pour gérer les modules du noyau Linux
+netfilter-persistent => necessaire pour rendre les modification d'iptables persistentes
+networking => gestion des connections reseau
+procps => Utilitaires pour le système de fichiers /proc
+rsyslog => permet de transférer les messages de journalisation sur un réseau IP
+sendmail => le service sendmail fonctionne en tant que relai SMTP afin d'envoyer les courriels plus rapidement
+udev => gestionnaire de peripheriques
+
+apt-get install mailutils
+vi /root/mbox
+
+verifier que le script d'update fonctionne (script_log.sh)
+supprimer le contenu de vi /var/log/update_script.log
+faire sudo reboot
+verifier dans vi /var/log/update_script.log que l'update a ete faite
+
+verifier le script de modification :
+modifier le timestamp dans /etc/crontab

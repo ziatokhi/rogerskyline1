@@ -1,0 +1,4 @@
+iface enp0s3 inet static
+	address 10.11.42.42
+	netmask 30
+	gateway 10.11.254.254
