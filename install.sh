@@ -242,5 +242,5 @@ rm -rf /root/rogerskyline1/
 sudo /etc/init.d/apparmor stop
 sudo systemctl stop apparmor.service
 sudo update-rc.d -f apparmor remove
-echo "Subject: Install done for $Username." | sudo sendmail -v manki@student.42.fr
+echo "Subject: Install done for $Username." | sudo sendmail -v zkamran@student.42.fr
 echo "All Completed."
