@@ -43,23 +43,23 @@ git clone https://github.com/ziatokhi/rogerskyline1 /root/rogerskyline1
 sleep 3
 
 echo "\n"
-echo "------------------------------------\n"
-echo "          user creation..."
+ 
+echo "Creating User Account >>>>>>>>>>>>>>>>>."
 echo "\n"
 
-echo "adding sudo user... Username ? (default: 'roger')"
+echo "adding NEW sudo user... Username ? (default: 'roger')"
 read Username
 Username=${Username:-"roger"}
 sudo adduser $Username
 sudo adduser $Username sudo
 
-sleep 4
+sleep 5
 
-echo "done"
+echo "Completed"
 
 echo "\n"
-echo "---------------------------------------------------------------\n"
-echo "          interfaces"
+ 
+echo " interfaces>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "\n"
 
 mv /etc/network/interfaces /etc/network/interfaces_save
@@ -69,16 +69,16 @@ cp /root/rogerskyline1/deploy/files/enp0s3 /etc/network/interfaces.d/
 
 sudo service networking restart
 
-echo "check ip address\n"
+echo "STATIC IP ADDRESS >>>>>>>>>>>>>>>>>>>>>\n"
 ip addr
 
 sleep 4
 
-echo "done"
+echo "Completed >>>>>>>>>>>>>>>>>>..."
 
 echo "\n"
-echo "---------------------------------------------------------------\n"
-echo "          SSHD config..."
+ 
+echo " SSHD config>>>>>>>>>>>>>>>>>>>>"
 echo "\n"
 
 mv /etc/ssh/sshd_config /etc/ssh/sshd_config_save
@@ -86,17 +86,17 @@ mv /etc/ssh/sshd_config /etc/ssh/sshd_config_save
 cp /root/rogerskyline1/deploy/files/sshd_config /etc/ssh/
 mkdir -pv /home/$Username/.ssh
 cat /root/rogerskyline1/deploy/files/id_rsa.pub >> /home/$Username/.ssh/authorized_keys
-#// PAS SUR ! ID_RSA PUB OU AUTHORIZED_KEYS//
+ 
 
 sleep 3
 
 sudo service sshd restart
 
-echo "done"
+echo "Completed"
 
 echo "\n"
-echo "---------------------------------------------------------------\n"
-echo "          setup Firewall..."
+ 
+echo " setup Firewall>>>>>>>>>>>>>>>>>>>>>>"
 echo "\n"
 
 sudo ufw enable
@@ -124,11 +124,11 @@ sudo systemctl enable ufw
 
 sleep 3
 
-echo "done"
+echo "Completed>>>>>>>>>>>>>>>>>>>"
 
 echo "\n"
-echo "---------------------------------------------------------------\n"
-echo "          DOS protection..."
+ 
+echo " DOS protection>>>>>>>>>>>>>>>>>>>>>>"
 echo "\n"
 
 sleep 2
@@ -141,10 +141,10 @@ cp /root/rogerskyline1/deploy/files/apache-dos.conf /etc/fail2ban/filter.d/
 sudo systemctl restart fail2ban
 #start la jail
 sudo fail2ban-client start
-echo "check jail status\n"
+echo "STATUS  jail status\n"
 sudo fail2ban-client status
 #verif status prison sshd avec nombre de tentative echouees et liste ip bannies
-echo "check sshd's jail\n"
+echo "STATUS  sshd's jail\n"
 sudo fail2ban-client status sshd
 #de-bannir une ip d'une jail
 #fail2ban-client set [nom de jail] unbanip [IP concernee]
@@ -153,11 +153,11 @@ sudo fail2ban-client status sshd
 
 sleep 4
 
-echo "done"
+echo "COMPLETED"
 
 echo "\n"
-echo "---------------------------------------------------------------\n"
-echo "          protection against Port Scans..."
+ 
+echo " Installing Port Scans DEFEFENCE>>>>>>>>>>>>>>>>>>>>>>>>>>>>>..."
 echo "\n"
 
 #config portsentry
@@ -166,7 +166,7 @@ cp /root/rogerskyline1/deploy/files/portsentry /etc/default/
 mv /etc/portsentry/portsentry.conf /etc/portsentry/portsentry.conf_save
 cp /root/rogerskyline1/deploy/files/portsentry.conf /etc/portsentry/
 
-sleep 3
+sleep 5
 
 sudo service portsentry restart
 sudo apt-get install iptables-persistent
@@ -195,7 +195,7 @@ cp /root/rogerskyline1/deploy/files/update_script.sh /root/script
 chmod 755 /root/script/update_script.sh
 chown root /root/script/update_script.sh
 
-sleep 3
+sleep 5
 
 echo "0  4  * * 1	root    /root/script/update_script.sh\n" >> /etc/crontab
 echo "@reboot	root    /root/script/update_script.sh\n" >> /etc/crontab
@@ -203,13 +203,12 @@ echo "@reboot	root    /root/script/update_script.sh\n" >> /etc/crontab
 echo "0  4  * * 1	root    /root/script/update_script.sh\n" >> /var/spool/cron/crontabs/root
 echo "@reboot	root    /root/script/update_script.sh\n" >> /var/spool/cron/crontabs/root
 
-sleep 2
+sleep 5
 
-echo "done"
+echo "completed"
 
 echo "\n"
-echo "---------------------------------------------------------------\n"
-echo "			crontab script"
+ echo "Schedule task crontab script"
 echo "\n"
 
 #script qui permet de surveiller modifications du fichier /etc/crontab et 
@@ -233,20 +232,20 @@ cat /etc/crontab > /root/script/tmp
 
 sleep 3
 
-echo "done"
+echo "completed"
 
 echo "\n"
-echo "---------------------------------------------------------------\n"
-echo "			web server..."
+ 
+echo "Starting WebServer.............."
 echo "\n"
 
 sudo systemctl start apache2
 
-echo "done"
+echo "completed"
 
 echo "\n"
-echo "---------------------------------------------------------------\n"
-echo "			virtual host..."
+ 
+echo "web Vhosting added"
 echo "\n"
 
 mkdir -p /var/www/login.fr/html
@@ -264,11 +263,11 @@ ln -s /etc/apache2/sites-available/default-ssl.conf /etc/apache2/sites-enabled
 
 sleep 3
 
-echo "done"
+echo "completed"
 
 echo "\n"
-echo "---------------------------------------------------------------\n"
-echo "			SSL certificat..."
+ 
+echo "SSL certificat..."
 echo "\n"
 
 sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/C=FR/ST=IDF/O=42/OU=Project-roger/CN=10.11.50.50" -keyout /etc/ssl/private/apache-selfsigned.key -out /etc/ssl/certs/apache-selfsigned.crt
@@ -284,8 +283,8 @@ sleep 2
 echo "done"
 
 echo "\n"
-echo "---------------------------------------------------------------\n"
-echo "			cleaning..."
+ 
+echo " Removing all unwated contents"
 echo "\n"
 
 apt-get remove git -y
@@ -293,6 +292,6 @@ apt-get purge git -y
 rm -rf /root/rogerskyline1
 echo "done"
 
-echo "subject: Install done for $Username." | sudo sendmail -v zkamran@student.42.fr
+echo "Subject Installation Completed $Username." | sudo sendmail -v zkamran@student.42.fr
 echo "\n"
-echo "FINISH."
+echo "ALL TASK Completed....."
