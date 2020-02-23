@@ -37,7 +37,7 @@ PermitRootLogin no
 PubkeyAuthentication yes
 
 # Expect .ssh/authorized_keys2 to be disregarded by default in future.
-#AuthorizedKeysFile	/home/carole/.ssh/authorized_keys
+#AuthorizedKeysFile	/home/zkamran/.ssh/authorized_keys
 
 #AuthorizedPrincipalsFile none
 
