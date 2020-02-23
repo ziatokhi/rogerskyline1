@@ -1,7 +1,7 @@
 #!/bin/bash
 
  
-echo "Updating...."
+echo "All Packages Updating>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "\n"
 
 apt-get update -y
@@ -9,11 +9,10 @@ apt-get upgrade -y
 
 echo "\n"
 
-echo "Installing Packages...."
+echo "Installing Packages>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "\n"
 
 apt-get install sudo -y
-apt-get install git -y
 apt-get install apache2 -y
 apt-get install sendmail -y
 apt-get install portsentry -y
@@ -22,25 +21,7 @@ apt-get install ufw -y
 apt-get install vim -y
 
 sleep 5
-
-echo "\n"
  
-echo "Disk INFO......................"
-echo "\n"
-
-sudo fdisk -l
-
-sleep 3
-
-echo "\n"
-
-echo "Downloding Git"
-echo "\n"
-
-cd /root
-git clone https://github.com/ziatokhi/rogerskyline1 /root/rogerskyline1
-
-sleep 3
 
 echo "\n"
  
