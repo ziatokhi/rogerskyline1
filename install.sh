@@ -1,246 +1,298 @@
-echo "Updating......\n"
- 
+#!/bin/bash
+
+echo "---------------------------------------------------------------\n"
+echo "          updating..."
 echo "\n"
-apt-get -y update
-apt-get -y upgrade
-echo "Update completed done."
+
+apt-get update -y
+apt-get upgrade -y
 
 echo "\n"
- echo "            installing package..."
+echo "---------------------------------------------------------------\n"
+echo "          installing package..."
 echo "\n"
-apt-get install -y sudo git apache2 sendmail
-echo "done."
+
+apt-get install sudo -y
+apt-get install git -y
+apt-get install apache2 -y
+apt-get install sendmail -y
+apt-get install portsentry -y
+apt-get install fail2ban -y
+apt-get install ufw -y
+apt-get install vim -y
+
+sleep 5
 
 echo "\n"
- 
-echo "            debian disk infos :"
+echo "---------------------------------------------------------------\n"
+echo "          debian disk info :"
 echo "\n"
 
 sudo fdisk -l
-sleep 3s
+
+sleep 3
 
 echo "\n"
- 
-echo "           Creating User..."
+echo "---------------------------------------------------------------\n"
+echo "          installing folder..."
 echo "\n"
 
-echo "Adding sudo user... Username ? (default: 'roger')"
+cd /root
+git clone https://github.com/Cracky-Kroll/roger-skyline /root/roger-skyline
+
+sleep 3
+
+echo "\n"
+echo "------------------------------------\n"
+echo "          user creation..."
+echo "\n"
+
+echo "adding sudo user... Username ? (default: 'roger')"
 read Username
 Username=${Username:-"roger"}
 sudo adduser $Username
 sudo adduser $Username sudo
 
+sleep 4
+
+echo "done"
+
 echo "\n"
- 
-echo " Adding netwwork interface ip 10.11.50.50"
+echo "---------------------------------------------------------------\n"
+echo "          interfaces"
 echo "\n"
 
-cp /etc/network/interfaces /etc/network/interfaces_save
-rm -f /etc/network/interfaces
-cp /root/rogerskyline1/files/interfaces /etc/network
+mv /etc/network/interfaces /etc/network/interfaces_save
+cp /root/roger-skyline/deploiement/files/interfaces /etc/network/
 
-cp /root/rogerskyline1/files/enp0s3 /etc/network/interfaces.d/
+cp /root/roger-skyline/deploiement/files/enp0s3 /etc/network/interfaces.d/
 
 sudo service networking restart
-echo "Completed ...."
+
+echo "check ip address\n"
+ip addr
+
+sleep 4
+
+echo "done"
 
 echo "\n"
- 
-echo "SSHD_CONFIG"
+echo "---------------------------------------------------------------\n"
+echo "          SSHD config..."
 echo "\n"
 
-cp /etc/ssh/sshd_config /etc/ssh/sshd_config_save
-rm -rf /etc/ssh/sshd_config
-cp /root/rogerskyline1/files/sshd_config /etc/ssh/
+mv /etc/ssh/sshd_config /etc/ssh/sshd_config_save
+
+cp /root/roger-skyline/deploiement/files/sshd_config /etc/ssh/
 mkdir -pv /home/$Username/.ssh
-yes '/root/rogerskyline1/files/id_rsa' | ssh-keygen
-cat /root/rogerskyline1/files/id_rsa.pub >> /home/$Username/.ssh/authorized_keys
-ssh-copy-id -i /root/rogerskyline1/files/id_rsa.pub $Username@10.11.50.50 -p 3333
+cat /root/roger-skyline/deploiement/files/id_rsa.pub >> /home/$Username/.ssh/authorized_keys
+#// PAS SUR ! ID_RSA PUB OU AUTHORIZED_KEYS//
 
-/etc/init.d/ssh restart
-echo "done."
+sleep 3
 
-echo "\n"
- 
-echo "Firewall ...."
-echo "\n"
+sudo service sshd restart
 
- 
-sudo iptables -t filter -F
-sudo iptables -t filter -X
-# block all
-sudo iptables -t filter -P INPUT DROP
-sudo iptables -t filter -P FORWARD DROP
-sudo iptables -t filter -P OUTPUT DROP
-# 
-sudo iptables -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
-sudo iptables -A OUTPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
-# Autorise loopback
-sudo iptables -t filter -A INPUT -i lo -j ACCEPT
-# Autorize SSH
-sudo iptables -t filter -A INPUT -p tcp --dport 3333 -j ACCEPT
-sudo iptables -t filter -A OUTPUT -p tcp --dport 3333 -j ACCEPT
-# Autorize HTTP
-sudo iptables -t filter -A INPUT -p tcp --dport 80 -j ACCEPT
-sudo iptables -t filter -A OUTPUT -p tcp --dport 80 -j ACCEPT
-# Autorize HTTPS
-sudo iptables -t filter -A INPUT -p tcp --dport 443 -j ACCEPT
-sudo iptables -t filter -A INPUT -p tcp --dport 8443 -j ACCEPT
-sudo iptables -t filter -A OUTPUT -p tcp --dport 443 -j ACCEPT
-# Autorize DNS
-sudo iptables -t filter -A INPUT -p tcp --dport 53 -j ACCEPT
-sudo iptables -t filter -A INPUT -p udp --dport 53 -j ACCEPT
-sudo iptables -t filter -A OUTPUT -p tcp --dport 53 -j ACCEPT
-sudo iptables -t filter -A OUTPUT -p udp --dport 53 -j ACCEPT
-# Autorize SMTP
-sudo iptables -t filter -A OUTPUT -p tcp --dport 25 -j ACCEPT
-echo "Completed...."
+echo "done"
 
 echo "\n"
-echo "==================================================================\n"
-echo "DOS PROTECTION"
+echo "---------------------------------------------------------------\n"
+echo "          setup Firewall..."
 echo "\n"
 
-# Bloque les paquets invalides
-sudo iptables -t mangle -A PREROUTING -m conntrack --ctstate INVALID -j DROP
-# Bloque les nouveaux paquets qui n'ont pas le flag tcp syn
-sudo iptables -t mangle -A PREROUTING -p tcp ! --syn -m conntrack --ctstate NEW -j DROP
-# Bloque les valeurs MSS anormal
-sudo iptables -t mangle -A PREROUTING -p tcp -m conntrack --ctstate NEW -m tcpmss ! --mss 536:65535 -j DROP
-# Limite les nouvelles connexions
-sudo iptables -A INPUT -p tcp -m conntrack --ctstate NEW -m limit --limit 60/s --limit-burst 20 -j ACCEPT
-sudo iptables -A INPUT -p tcp -m conntrack --ctstate NEW -j DROP
-# Limite les nouvelles connexions si un client possede deja 80 connexions
-sudo iptables -A INPUT -p tcp -m connlimit --connlimit-above 80 -j REJECT --reject-with tcp-reset
-# Limite les connections
-sudo iptables -A INPUT -p tcp --dport 80 -m limit --limit 25/minute --limit-burst 100 -j ACCEPT
-# Protection Synflood
-sudo iptables -A INPUT -p tcp --syn -m limit --limit 2/s --limit-burst 30 -j ACCEPT
-# Protection Pingflood
-sudo iptables -A INPUT -p icmp --icmp-type echo-request -m limit --limit 1/s -j ACCEPT
-echo "done."
+sudo ufw enable
+#ssh
+sudo ufw allow 51001/tcp
+#http
+sudo ufw allow 80/tcp
+#https
+sudo ufw allow 443/tcp
+sudo ufw enable
+sudo ufw reload
+sudo ufw status verbose
+
+sleep 3
+
+sudo systemctl start ufw
+sudo systemctl enable ufw
+
+#/*///////////////////////////////////////////////////////////////////// sais plus !!!!!
+#sudo apt-get iptables
+#sudo iptables -t filter -A INPUT -p tcp --dport 51001 -j ACCEPT
+#sudo iptables -t filter -A OUTPUT -p tcp --dport 51001 -j ACCEPT
+#*///////////////////////////////////////////////////////////////////
+
+
+sleep 3
+
+echo "done"
 
 echo "\n"
-echo "\n"
-echo " PORTS SCAN PROTECTION"
-echo "\n"
-
-# Protection scan de ports
-sudo iptables -A INPUT -p tcp --tcp-flags ALL NONE -j DROP
-sudo iptables -A INPUT -p tcp --tcp-flags ALL ALL -m limit --limit 1/h -j ACCEPT
-echo "done."
-
-echo "\n"
-echo "\n"
-echo "                  FAIL2BAN CONFIGURATION"
+echo "---------------------------------------------------------------\n"
+echo "          DOS protection..."
 echo "\n"
 
-sudo apt-get install fail2ban
-cp /root/rogerskyline1/files/jail.local /etc/fail2ban/
-sudo service fail2ban restart
+sleep 2
+
+#cp /etc/fail2ban/fail2ban.conf /etc/fail2ban/fail2ban.local
+#rm /etc/fail2ban/fail2ban.conf
+mv /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
+cp /root/roger-skyline/deploiement/files/jail.conf /etc/fail2ban/
+cp /root/roger-skyline/deploiement/files/apache-dos.conf /etc/fail2ban/filter.d/
+sudo systemctl restart fail2ban
+#start la jail
+sudo fail2ban-client start
+echo "check jail status\n"
 sudo fail2ban-client status
-sleep 3s
-echo "done."
+#verif status prison sshd avec nombre de tentative echouees et liste ip bannies
+echo "check sshd's jail\n"
+sudo fail2ban-client status sshd
+#de-bannir une ip d'une jail
+#fail2ban-client set [nom de jail] unbanip [IP concernee]
+#bannir manuellement une IP sur une jail
+#fail2ban-client set [nom de jail] banip [IP a bannir]
 
+sleep 4
+
+echo "done"
 
 echo "\n"
-echo "\n"
-echo "            making the configuration persistent..."
+echo "---------------------------------------------------------------\n"
+echo "          protection against Port Scans..."
 echo "\n"
 
-apt-get install -y iptables-persistent
-echo "done."
+#config portsentry
+mv /etc/default/portsentry /etc/default/portsentry_save
+cp /root/roger-skyline/deploiement/files/portsentry /etc/default/
+mv /etc/portsentry/portsentry.conf /etc/portsentry/portsentry.conf_save
+cp /root/roger-skyline/deploiement/files/portsentry.conf /etc/portsentry/
+
+sleep 3
+
+sudo service portsentry restart
+sudo apt-get install iptables-persistent
+sudo iptables-save > /etc/iptables/rules.v6
+
+echo "done"
 
 echo "\n"
-echo "\n"
-echo "            MAIL SERVER"
+echo "---------------------------------------------------------------\n"
+echo "          Mail server"
 echo "\n"
 
 yes 'Y' | sudo sendmailconfig
-echo "done."
+
+sleep 2
 
 echo "\n"
-echo " \n"
-echo "            UPDATE SCRIPT"
+echo "---------------------------------------------------------------\n"
+echo "          update Script"
 echo "\n"
+#met a jour ensemble des packages, qui log l'ensemble ds un fichier 
+#/var/log/update_script.log. A chaque reboot et 1 fois par semaine a 4h du mat.
 
-mkdir /root/scripts
-cp /root/rogerskyline1/scripts/script_log.sh /root/scripts/
-chmod 755 /root/scripts/script_log.sh
-chown root /root/scripts/script_log.sh
+mkdir /root/script
+cp /root/roger-skyline/deploiement/files/update_script.sh /root/script
+chmod 755 /root/script/update_script.sh
+chown root /root/script/update_script.sh
 
-echo "0 4 * * wed root /root/scripts/script_log.sh\n" >> /etc/crontab
-echo "@reboot root /root/scripts/script_log.sh\n" >> /etc/crontab
+sleep 3
 
-echo "0 4 * * wed root /root/scripts/script_log.sh\n" >> /var/spool/cron/crontabs/root
-echo "@reboot root /root/scripts/script_log.sh\n" >> /var/spool/cron/crontabs/root
+echo "0  4  * * 1	root    /root/script/update_script.sh\n" >> /etc/crontab
+echo "@reboot	root    /root/script/update_script.sh\n" >> /etc/crontab
 
-echo "done."
+echo "0  4  * * 1	root    /root/script/update_script.sh\n" >> /var/spool/cron/crontabs/root
+echo "@reboot	root    /root/script/update_script.sh\n" >> /var/spool/cron/crontabs/root
 
-echo "\n"
-echo "==================================================================\n"
-echo "            CRONTAB SCRIPT"
-echo "\n"
+sleep 2
 
-cp /root/rogerskyline1/scripts/script_crontab.sh /root/scripts/
-cp /root/rogerskyline1/files/mail_type.txt /root/scripts/
-chmod 755 /root/scripts/script_crontab.sh
-chown root /root/scripts/script_crontab.sh
-chown root /root/scripts/mail_type.txt
-echo "0 0 * * * root /root/scripts/script_crontab.sh\n" >> /etc/crontab
-echo "0 0 * * * root /root/scripts/script_crontab.sh\n" >> /var/spool/cron/crontabs/root
-cat /etc/crontab > /root/scripts/tmp
-echo "done."
+echo "done"
 
 echo "\n"
-echo "==================================================================\n"
-echo "            WEB SERVER"
+echo "---------------------------------------------------------------\n"
+echo "			crontab script"
 echo "\n"
 
-systemctl start apache2
-echo "done."
+#script qui permet de surveiller modifications du fichier /etc/crontab et 
+#envoie un mail a root si modifie. tache planifie tous les jour a minuit.
+
+cp /root/roger-skyline/deploiement/files/script_modif_crontab.sh /root/script/
+cp /root/roger-skyline/deploiement/files/mail_type.txt /root/script/
+chmod 755 /root/script/script_modif_crontab.sh
+chown root /root/script/script_modif_crontab.sh
+chown root /root/script/mail_type.txt
+
+echo "done\n"
+
+echo "0  0  * * *	root    /root/script/script_modif_crontab.sh\n" >> /etc/crontab
+echo "0  0  * * *	root    /root/script/script_modif_crontab.sh\n" >> /var/spool/cron/crontabs/root
+
+systemctl enable cron
+
+touch /root/script/tmp
+cat /etc/crontab > /root/script/tmp
+
+sleep 3
+
+echo "done"
 
 echo "\n"
-echo "==================================================================\n"
-echo "            VIRTUAL HOST"
+echo "---------------------------------------------------------------\n"
+echo "			web server..."
 echo "\n"
 
-mkdir -p /var/www/init.login.fr/html
-chown -R $Username:$Username /var/www/init.login.fr/html
-chmod -R 775 /var/www/init.login.fr
+sudo systemctl start apache2
 
-cp /root/rogerskyline1/files/index.html /var/www/init.login.fr/html/
-cp -r /root/rogerskyline1/files/home.css /var/www/init.login.fr/html/
-
-cp /root/rogerskyline1/files/init.login.fr.conf /etc/apache2/sites-available/
-
-rm /etc/apache2/sites-enabled/000-default.conf
-ln -s /etc/apache2/sites-available/init.login.fr.conf /etc/apache2/sites-enabled/
-
-echo "done."
+echo "done"
 
 echo "\n"
-echo "==================================================================\n"
-echo "            SSL CERTIFICAT"
+echo "---------------------------------------------------------------\n"
+echo "			virtual host..."
 echo "\n"
 
-cd /etc/ssl/certs/
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout roger.key -out roger.crt
+mkdir -p /var/www/login.fr/html
+chown -R $Username:$Username /var/www/login.fr/html
+chmod -R 755 /var/www/login.fr/html
+
+cp /root/roger-skyline/deploiement/files/index.html /var/www/login.fr/html
+cp /root/roger-skyline/deploiement/files/style.css /var/www/login.fr/html
+
+cp /root/roger-skyline/deploiement/files/default-ssl.conf /etc/apache2/sites-available
+
+rm /etc/apache2/sites-available/000-default.conf
+cp /root/roger-skyline/deploiement/files/000-default.conf /etc/apache2/sites-available/
+ln -s /etc/apache2/sites-available/default-ssl.conf /etc/apache2/sites-enabled
+
+sleep 3
+
+echo "done"
+
+echo "\n"
+echo "---------------------------------------------------------------\n"
+echo "			SSL certificat..."
+echo "\n"
+
+sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/C=FR/ST=IDF/O=42/OU=Project-roger/CN=10.11.200.247" -keyout /etc/ssl/private/apache-selfsigned.key -out /etc/ssl/certs/apache-selfsigned.crt
+
+sleep 2
 
 sudo a2enmod ssl
-sudo service apache2 restart
-echo "done."
+#sudo service apache2 restart
+sudo systemctl restart apache2
+
+sleep 2
+
+echo "done"
 
 echo "\n"
-echo "==================================================================\n"
-echo "            CLEANING &  desactivating unecessary services"
+echo "---------------------------------------------------------------\n"
+echo "			cleaning..."
 echo "\n"
 
-apt-get remove -y git
-yes 'Y' | sudo apt-get remove --auto-remove git-man
-rm -rf /root/rogerskyline1/
-sudo /etc/init.d/apparmor stop
-sudo systemctl stop apparmor.service
-sudo update-rc.d -f apparmor remove
-echo "Subject: Install done for $Username." | sudo sendmail -v zkamran@student.42.fr
-echo "All Completed."
+apt-get remove git -y
+apt-get purge git -y
+rm -rf /root/roger-skyline
+echo "done"
+
+echo "subject: Install done for $Username." | sudo sendmail -v ccarole@student.42.fr
+echo "\n"
+echo "FINISH."
