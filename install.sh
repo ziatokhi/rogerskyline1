@@ -82,7 +82,7 @@ echo "\n"
 
 sudo ufw enable
 #ssh
-sudo ufw allow 51001/tcp
+sudo ufw allow 3333/tcp
 #http
 sudo ufw allow 80/tcp
 #https
