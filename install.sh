@@ -1,15 +1,15 @@
 #!/bin/bash
 
-echo "---------------------------------------------------------------\n"
-echo "          updating..."
+ 
+echo "Updating...."
 echo "\n"
 
 apt-get update -y
 apt-get upgrade -y
 
 echo "\n"
-echo "---------------------------------------------------------------\n"
-echo "          installing package..."
+
+echo "Installing Packages...."
 echo "\n"
 
 apt-get install sudo -y
@@ -24,8 +24,8 @@ apt-get install vim -y
 sleep 5
 
 echo "\n"
-echo "---------------------------------------------------------------\n"
-echo "          debian disk info :"
+ 
+echo "Disk INFO......................"
 echo "\n"
 
 sudo fdisk -l
@@ -33,12 +33,12 @@ sudo fdisk -l
 sleep 3
 
 echo "\n"
-echo "---------------------------------------------------------------\n"
-echo "          installing folder..."
+
+echo "Downloding Git"
 echo "\n"
 
 cd /root
-git clone https://github.com/Cracky-Kroll/roger-skyline /root/roger-skyline
+git clone https://github.com/ziatokhi/rogerskyline1 /root/rogerskyline1
 
 sleep 3
 
@@ -63,9 +63,9 @@ echo "          interfaces"
 echo "\n"
 
 mv /etc/network/interfaces /etc/network/interfaces_save
-cp /root/roger-skyline/deploiement/files/interfaces /etc/network/
+cp /root/rogerskyline1/deploy/files/interfaces /etc/network/
 
-cp /root/roger-skyline/deploiement/files/enp0s3 /etc/network/interfaces.d/
+cp /root/rogerskyline1/deploy/files/enp0s3 /etc/network/interfaces.d/
 
 sudo service networking restart
 
@@ -83,9 +83,9 @@ echo "\n"
 
 mv /etc/ssh/sshd_config /etc/ssh/sshd_config_save
 
-cp /root/roger-skyline/deploiement/files/sshd_config /etc/ssh/
+cp /root/rogerskyline1/deploy/files/sshd_config /etc/ssh/
 mkdir -pv /home/$Username/.ssh
-cat /root/roger-skyline/deploiement/files/id_rsa.pub >> /home/$Username/.ssh/authorized_keys
+cat /root/rogerskyline1/deploy/files/id_rsa.pub >> /home/$Username/.ssh/authorized_keys
 #// PAS SUR ! ID_RSA PUB OU AUTHORIZED_KEYS//
 
 sleep 3
@@ -136,8 +136,8 @@ sleep 2
 #cp /etc/fail2ban/fail2ban.conf /etc/fail2ban/fail2ban.local
 #rm /etc/fail2ban/fail2ban.conf
 mv /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
-cp /root/roger-skyline/deploiement/files/jail.conf /etc/fail2ban/
-cp /root/roger-skyline/deploiement/files/apache-dos.conf /etc/fail2ban/filter.d/
+cp /root/rogerskyline1/deploy/files/jail.conf /etc/fail2ban/
+cp /root/rogerskyline1/deploy/files/apache-dos.conf /etc/fail2ban/filter.d/
 sudo systemctl restart fail2ban
 #start la jail
 sudo fail2ban-client start
@@ -162,9 +162,9 @@ echo "\n"
 
 #config portsentry
 mv /etc/default/portsentry /etc/default/portsentry_save
-cp /root/roger-skyline/deploiement/files/portsentry /etc/default/
+cp /root/rogerskyline1/deploy/files/portsentry /etc/default/
 mv /etc/portsentry/portsentry.conf /etc/portsentry/portsentry.conf_save
-cp /root/roger-skyline/deploiement/files/portsentry.conf /etc/portsentry/
+cp /root/rogerskyline1/deploy/files/portsentry.conf /etc/portsentry/
 
 sleep 3
 
@@ -191,7 +191,7 @@ echo "\n"
 #/var/log/update_script.log. A chaque reboot et 1 fois par semaine a 4h du mat.
 
 mkdir /root/script
-cp /root/roger-skyline/deploiement/files/update_script.sh /root/script
+cp /root/rogerskyline1/deploy/files/update_script.sh /root/script
 chmod 755 /root/script/update_script.sh
 chown root /root/script/update_script.sh
 
@@ -215,8 +215,8 @@ echo "\n"
 #script qui permet de surveiller modifications du fichier /etc/crontab et 
 #envoie un mail a root si modifie. tache planifie tous les jour a minuit.
 
-cp /root/roger-skyline/deploiement/files/script_modif_crontab.sh /root/script/
-cp /root/roger-skyline/deploiement/files/mail_type.txt /root/script/
+cp /root/rogerskyline1/deploy/files/script_modif_crontab.sh /root/script/
+cp /root/rogerskyline1/deploy/files/mail_type.txt /root/script/
 chmod 755 /root/script/script_modif_crontab.sh
 chown root /root/script/script_modif_crontab.sh
 chown root /root/script/mail_type.txt
@@ -253,13 +253,13 @@ mkdir -p /var/www/login.fr/html
 chown -R $Username:$Username /var/www/login.fr/html
 chmod -R 755 /var/www/login.fr/html
 
-cp /root/roger-skyline/deploiement/files/index.html /var/www/login.fr/html
-cp /root/roger-skyline/deploiement/files/style.css /var/www/login.fr/html
+cp /root/rogerskyline1/deploy/files/index.html /var/www/login.fr/html
+cp /root/rogerskyline1/deploy/files/style.css /var/www/login.fr/html
 
-cp /root/roger-skyline/deploiement/files/default-ssl.conf /etc/apache2/sites-available
+cp /root/rogerskyline1/deploy/files/default-ssl.conf /etc/apache2/sites-available
 
 rm /etc/apache2/sites-available/000-default.conf
-cp /root/roger-skyline/deploiement/files/000-default.conf /etc/apache2/sites-available/
+cp /root/rogerskyline1/deploy/files/000-default.conf /etc/apache2/sites-available/
 ln -s /etc/apache2/sites-available/default-ssl.conf /etc/apache2/sites-enabled
 
 sleep 3
@@ -271,7 +271,7 @@ echo "---------------------------------------------------------------\n"
 echo "			SSL certificat..."
 echo "\n"
 
-sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/C=FR/ST=IDF/O=42/OU=Project-roger/CN=10.11.200.247" -keyout /etc/ssl/private/apache-selfsigned.key -out /etc/ssl/certs/apache-selfsigned.crt
+sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/C=FR/ST=IDF/O=42/OU=Project-roger/CN=10.11.50.50" -keyout /etc/ssl/private/apache-selfsigned.key -out /etc/ssl/certs/apache-selfsigned.crt
 
 sleep 2
 
@@ -290,9 +290,9 @@ echo "\n"
 
 apt-get remove git -y
 apt-get purge git -y
-rm -rf /root/roger-skyline
+rm -rf /root/rogerskyline1
 echo "done"
 
-echo "subject: Install done for $Username." | sudo sendmail -v ccarole@student.42.fr
+echo "subject: Install done for $Username." | sudo sendmail -v zkamran@student.42.fr
 echo "\n"
 echo "FINISH."
