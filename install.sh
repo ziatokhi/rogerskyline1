@@ -44,9 +44,9 @@ echo " interfaces>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "\n"
 
 mv /etc/network/interfaces /etc/network/interfaces_save
-cp /root/rogerskyline1/deploy/files/interfaces /etc/network/
+cp /root/rogerskyline1/files/interfaces /etc/network/
 
-cp /root/rogerskyline1/deploy/files/enp0s3 /etc/network/interfaces.d/
+cp /root/rogerskyline1/files/enp0s3 /etc/network/interfaces.d/
 
 sudo service networking restart
 
@@ -64,9 +64,9 @@ echo "\n"
 
 mv /etc/ssh/sshd_config /etc/ssh/sshd_config_save
 
-cp /root/rogerskyline1/deploy/files/sshd_config /etc/ssh/
+cp /root/rogerskyline1/files/sshd_config /etc/ssh/
 mkdir -pv /home/$Username/.ssh
-cat /root/rogerskyline1/deploy/files/id_rsa.pub >> /home/$Username/.ssh/authorized_keys
+cat /root/rogerskyline1/files/id_rsa.pub >> /home/$Username/.ssh/authorized_keys
  
 
 sleep 3
@@ -117,8 +117,8 @@ sleep 2
 #cp /etc/fail2ban/fail2ban.conf /etc/fail2ban/fail2ban.local
 #rm /etc/fail2ban/fail2ban.conf
 mv /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
-cp /root/rogerskyline1/deploy/files/jail.conf /etc/fail2ban/
-cp /root/rogerskyline1/deploy/files/apache-dos.conf /etc/fail2ban/filter.d/
+cp /root/rogerskyline1/files/jail.conf /etc/fail2ban/
+cp /root/rogerskyline1/files/apache-dos.conf /etc/fail2ban/filter.d/
 sudo systemctl restart fail2ban
 #start la jail
 sudo fail2ban-client start
@@ -143,9 +143,9 @@ echo "\n"
 
 #config portsentry
 mv /etc/default/portsentry /etc/default/portsentry_save
-cp /root/rogerskyline1/deploy/files/portsentry /etc/default/
+cp /root/rogerskyline1/files/portsentry /etc/default/
 mv /etc/portsentry/portsentry.conf /etc/portsentry/portsentry.conf_save
-cp /root/rogerskyline1/deploy/files/portsentry.conf /etc/portsentry/
+cp /root/rogerskyline1/files/portsentry.conf /etc/portsentry/
 
 sleep 5
 
@@ -172,7 +172,7 @@ echo "\n"
 #/var/log/update_script.log. A chaque reboot et 1 fois par semaine a 4h du mat.
 
 mkdir /root/script
-cp /root/rogerskyline1/deploy/files/update_script.sh /root/script
+cp /root/rogerskyline1/files/update_script.sh /root/script
 chmod 755 /root/script/update_script.sh
 chown root /root/script/update_script.sh
 
@@ -195,8 +195,8 @@ echo "\n"
 #script qui permet de surveiller modifications du fichier /etc/crontab et 
 #envoie un mail a root si modifie. tache planifie tous les jour a minuit.
 
-cp /root/rogerskyline1/deploy/files/script_modif_crontab.sh /root/script/
-cp /root/rogerskyline1/deploy/files/mail_type.txt /root/script/
+cp /root/rogerskyline1/files/script_modif_crontab.sh /root/script/
+cp /root/rogerskyline1/files/mail_type.txt /root/script/
 chmod 755 /root/script/script_modif_crontab.sh
 chown root /root/script/script_modif_crontab.sh
 chown root /root/script/mail_type.txt
@@ -233,13 +233,13 @@ mkdir -p /var/www/login.fr/html
 chown -R $Username:$Username /var/www/login.fr/html
 chmod -R 755 /var/www/login.fr/html
 
-cp /root/rogerskyline1/deploy/files/index.html /var/www/login.fr/html
-cp /root/rogerskyline1/deploy/files/style.css /var/www/login.fr/html
+cp /root/rogerskyline1/files/index.html /var/www/login.fr/html
+cp /root/rogerskyline1/files/style.css /var/www/login.fr/html
 
-cp /root/rogerskyline1/deploy/files/default-ssl.conf /etc/apache2/sites-available
+cp /root/rogerskyline1/files/default-ssl.conf /etc/apache2/sites-available
 
 rm /etc/apache2/sites-available/000-default.conf
-cp /root/rogerskyline1/deploy/files/000-default.conf /etc/apache2/sites-available/
+cp /root/rogerskyline1/files/000-default.conf /etc/apache2/sites-available/
 ln -s /etc/apache2/sites-available/default-ssl.conf /etc/apache2/sites-enabled
 
 sleep 3
