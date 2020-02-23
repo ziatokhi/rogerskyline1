@@ -234,7 +234,7 @@ chown -R $Username:$Username /var/www/login.fr/html
 chmod -R 755 /var/www/login.fr/html
 
 cp /root/rogerskyline1/files/index.html /var/www/login.fr/html
-cp /root/rogerskyline1/files/style.css /var/www/login.fr/html
+ 
 
 cp /root/rogerskyline1/files/default-ssl.conf /etc/apache2/sites-available
 
